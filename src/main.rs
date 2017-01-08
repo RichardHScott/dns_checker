@@ -1,10 +1,17 @@
 #![feature(lookup_host)]
 
+/* Reads from the file domains.txt that exists in the directory where the executable is run from
+ * and prints the ip associated with each domain.
+ * domains.txt file is required to be formatted as one domain per line e.g. 
+    www.google.com
+    www.dave.com
+ */
+
 fn main() {
     let filename = "domains.txt";
 
     for domain in &load_names(filename).unwrap_or_else( |e| { panic!("e"); } ) {
-        print_ips(domain, &lookup_ip(domain).unwrap() );
+        print_ips(domain, &lookup_ip(domain) );
         println!(" ");
     }
 
@@ -33,12 +40,12 @@ fn load_names(filename :&str) -> Result<Vec<String>, &'static str> {
     Ok(v)
 }
 
-fn lookup_ip(domain: &str) -> Result<Vec<String>, &'static str> {
+fn lookup_ip(domain: &str) -> Vec<String> {
     use std::net::lookup_host;
 
     match lookup_host(domain) {
-        Ok(v) => Ok( v.map(|h| { h.ip().to_string() }).collect() ),
-        Err(e) => Err("Error")
+        Ok(hosts) => hosts.map(|host| { host.ip().to_string() }).collect(),
+        Err(err) => { let mut vec = Vec::new(); vec.push(err.to_string()); vec }
     }
 }
 

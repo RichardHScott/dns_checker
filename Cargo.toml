@@ -1,0 +1,6 @@
+[package]
+name = "dns_checker"
+version = "0.1.0"
+authors = ["linuva <richard.hscott@gmail.com>"]
+
+[dependencies]
